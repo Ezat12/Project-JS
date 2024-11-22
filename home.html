@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Page</title>
+  <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="node_modules/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/all.min.css">
+</head>
+<style>
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+  .success-alert.visiable {
+    visibility: visible !important;
+    top: 50% !important;
+    transform: translate(-50% , -50%) scale(1) !important;
+  }
+  .button-add {
+    display: none;
+  }
+  textarea:focus {
+    outline: none;
+  }
+  .card {
+    cursor: pointer;
+  }
+  .login-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid gray;
+    display: none;
+  }
+</style>
+<body>
+<!-- Start Model Register -->
+  <div class="modal fade" id="register-model" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+          <button type="button" class="btn-close-register" style="border: none; background-color: transparent;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Name:</label>
+              <input type="text" class="form-control" id="register-name">
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">UserName:</label>
+              <input type="text" class="form-control" id="register-username">
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">Password:</label>
+              <input type="password" class="form-control" id="register-password">
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">Image:</label>
+              <input type="file" class="form-control" id="register-image">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="registerBtnClick()">Login</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Model Register -->
+
+<!-- Start Model Add Body -->
+  <div class="modal fade" id="add-model" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="post-model-title" id="exampleModalLabel">New Post</h5>
+          <button type="button" class="btn-close-add fs-2" style="border: none; background-color: transparent;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <input type="text" placeholder="Title" class="form-control" id="title-add">
+            </div>
+            <div class="mb-3">
+              <textarea id="body-add" class="w-100 p-2 border rounded form-control" placeholder="Body" style="resize: none;"></textarea>
+              <!-- <input type="text" class="form-control" id="register-username"> -->
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">Image</label>
+              <input type="file" class="form-control" id="image-add">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="createPost()">Create</button>
+
+          <input type="hidden" id="get-value" value="true">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Model Add Body -->
+
+  <!-- Start Model Login -->
+  <div class="modal fade" id="login-model" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+          <button type="button" class="btn-close-login" style="border: none; background-color: transparent;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">UserName:</label>
+              <input type="text" class="form-control" id="user-name">
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">Password:</label>
+              <input type="password" class="form-control" id="password-name">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="close-btn btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="loginBtnClick()">Login</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Model Login -->
+
+  <!-- Start Add Button -->
+  <div  data-bs-toggle="modal" data-bs-target="#add-model" class="button-add position-fixed " style="right: 70px; bottom: 30px; cursor: pointer; ">
+    <div class="bg-success fs-1 d-flex align-items-center justify-content-center rounded-circle text-white" style="width: 50px; height: 50px;">+</div>
+  </div>
+  <!-- End Add Button-->
+
+  <!-- Start NavBar -->
+  <div class="container">
+    <div class="col-9 mx-auto">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light shadow rounded pt-3">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="home.html">Tarmez</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse " id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="the-profile nav-link" href="#">Profile</a>
+              </li>
+            </ul>
+            <div style="flex-grow: 1;" class="users text-center">
+              <span class="login-name">null User</span>
+              <img class="login-image" alt="">
+            </div>
+            <div class="d-flex gap-2">
+              <button id="login-btn" class="btn btn-outline-success " data-bs-toggle="modal" data-bs-target="#login-model">Login</button>
+              <button id="regita-btn" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#register-model">Register</button>
+              <button id="logout-btn" class="btn btn-outline-danger " onclick="logout()" style="display: none;">Logout</button>
+            </div>
+          </div>
+        </div>
+    </nav>
+    </div>
+  </div>
+  <!-- End NavBar -->
+
+  <!-- Start aleart Success -->
+  <div class="container ">
+    <div class="alert-show success-alert col-8 mx-auto bg-success position-absolute text-center border " style="transition: 0.3s; z-index:2; top: 50%; left:50%; transform: translate(-50% , -50%) scale(0); height: 100px; line-height: 100px; border-radius: 10px; visibility: hidden;">
+      <h1 class="text text-light" style="line-height: 100px;">Success Login</h1>
+    </div>
+  </div>
+  <!-- End aleart Success -->
+
+  <!-- Start Body -->
+  <!-- <div class="container mt-5">
+    <div class="col-9 mx-auto">
+      <div class="card">
+        
+        <div class="card-header d-flex align-items-center">
+          <img src="images/image-1.jpg" class="rounded-circle border border-3" style="width: 40px; height: 40px;">
+          <p class="mb-0 ms-2" style="font-weight: bold;">@Ezat</p>
+        </div>
+        
+        <div class=" p-3"> 
+          <img class="w-100 h-25" src="images/bile.jpg" alt="">
+          <p class="m-0" style="color: #666;">2 min ago</p>
+        </div>
+        
+        <div class="card-body pt-0">
+          <h5 class="card-title">Special title treatment</h5>
+          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+        </div>
+      
+        <div class=" p-2 border border-top-2 ">
+          <div class="d-flex align-items-center">
+            <i class="fa-solid fa-pen-clip me-1 "></i>
+              (3) comments
+            <span class="d-flex m-0 ms-3">
+              <p class="text m-0 me-2 bg-secondary text-light p-1 px-2 rounded-pill">Ezat</p>
+              <p class="text m-0 me-2 bg-secondary text-light p-1 px-2 rounded-pill">Ezat</p>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <!-- <script src="js/main.js"></script> -->
+</body>
+<script src="js/logic.js"></script>
+<script>
+
+let currentPage = 1;
+
+window.addEventListener("scroll", () => {
+  const endPage = window.innerHeight + Math.ceil(window.pageYOffset) >=document.body.offsetHeight;
+  // console.log(endPage);
+
+  if (endPage) {
+    currentPage++;
+    axios
+      .get(`https://tarmeezacademy.com/api/v1/posts?limit=20&page=${currentPage}`)
+      .then((respons) => {
+        let theData = respons.data.data;
+        cratePosts(theData);
+      });
+  }
+})
+
+
+
+axios
+  .get("https://tarmeezacademy.com/api/v1/posts?limit=10")
+  .then((respons) => {
+    let theData = respons.data.data;
+    console.log(theData);
+    cratePosts(theData);
+  });
+
+
+function createPost() {
+
+  const titlePost = document.querySelector("#title-add").value;
+  const bodyPost = document.querySelector("#body-add").value;
+  const imagePost = document.querySelector("#image-add").files[0];
+
+  let token = localStorage.getItem("token")
+
+  let formData = new FormData();
+  formData.append("title", titlePost);
+  formData.append("body", bodyPost);
+  formData.append("image", imagePost);
+
+  if(getValue.value == "true") {
+
+    axios.post("https://tarmeezacademy.com/api/v1/posts", formData, {
+      headers: {
+        "Content-Type": `multipart/form-data`,
+        "authorization": `Bearer ${token}`,
+      },
+    })
+    .then((respons) => {
+      document.querySelector(".btn-close-add").click();
+      
+      let data = respons.data.data;
+    
+      let div = document.createElement("div");
+      div.className = "container mt-5";
+
+      let container = `
+    
+      <div class="col-9 mx-auto">
+        <div class="card">
+          <!-- card header -->
+          <div class="card-header d-flex align-items-center">
+            <img src="${data.author.profile_image}" class="rounded-circle border border-3" style="width: 40px; height: 40px;">
+            <p class="mb-0 ms-2" style="font-weight: bold;">@${data.author.name}</p>
+          </div>
+          <!-- Card image and time -->
+          <div class=" p-3"> 
+            <img class="w-100 h-25" src="${data.image}" alt="">
+            <p class="m-0" style="color: #666;">${data.created_at}</p>
+          </div>
+          <!-- card bodt -->
+          <div class="card-body pt-0">
+            <h5 class="card-title">${data.title}</h5>
+            <p class="card-text">${data.body}</p>
+          </div>
+          <!-- card comment -->
+          <div class=" p-2 border border-top-2 ">
+          <div class="d-flex align-items-center">
+            <i class="fa-solid fa-pen-clip me-1 "></i>
+              (${data.comments_count}) comments
+            <span class="d-flex m-0 ms-3">
+            </span>
+          </div>
+        </div>
+        </div>
+      </div>
+
+    ` ;
+      div.innerHTML = container;
+      document.body.appendChild(div);
+
+      // location.reload();
+    });
+  }
+  else {
+    
+    let id = getValue.getAttribute("data-id");
+    formData.append("_method", "put")
+    axios.post(`https://tarmeezacademy.com/api/v1/posts/${id}`, formData, {
+      headers: {
+        "Content-Type": `multipart/form-data`,
+        "authorization": `Bearer ${token}`,
+      },
+    })
+    .then((respons) => {
+      document.querySelector(".btn-close-add").click();
+      
+      let data = respons.data.data;
+    
+      let div = document.createElement("div");
+      div.className = "container mt-5";
+
+      let container = `
+    
+      <div class="col-9 mx-auto">
+        <div class="card">
+          <!-- card header -->
+          <div class="card-header d-flex align-items-center">
+            <img src="${data.author.profile_image}" class="rounded-circle border border-3" style="width: 40px; height: 40px;">
+            <p class="mb-0 ms-2" style="font-weight: bold;">@${data.author.name}</p>
+          </div>
+          <!-- Card image and time -->
+          <div class=" p-3"> 
+            <img class="w-100 h-25" src="${data.image}" alt="">
+            <p class="m-0" style="color: #666;">${data.created_at}</p>
+          </div>
+          <!-- card bodt -->
+          <div class="card-body pt-0">
+            <h5 class="card-title">${data.title}</h5>
+            <p class="card-text">${data.body}</p>
+          </div>
+          <!-- card comment -->
+          <div class=" p-2 border border-top-2 ">
+          <div class="d-flex align-items-center">
+            <i class="fa-solid fa-pen-clip me-1 "></i>
+              (${data.comments_count}) comments
+            <span class="d-flex m-0 ms-3">
+            </span>
+          </div>
+        </div>
+        </div>
+      </div>
+
+    ` ;
+      div.innerHTML = container;
+      document.body.appendChild(div);
+
+      location.reload();
+    });
+  }
+
+}
+</script>
+</html>
